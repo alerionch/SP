@@ -1,0 +1,45 @@
+#!/bin/bash
+
+while :
+do
+echo "Текущий каталог: $(pwd)"
+echo "Содержание каталога"
+ls -h
+echo ""
+
+while :
+do
+echo "Введите имя файла"
+read FILENAME
+
+if [ -f "$FILENAME" ]; then
+echo "$FILENAME существует"
+break
+else
+echo "Такого файла не существует. Введите заново"
+fi
+done
+echo ""
+
+echo "Введите дату в формате дд/мм/гггг"
+read DATE
+
+if [ $(date --date="$(echo $DATE | awk -F '/' '{print $2"/"$1"/"$3}')" +%d/%m/%Y 2>/dev/null) ]; then
+echo "Время введено корректно"
+if [ $(find . -type f -newermt $DATE -name $FILENAME 2>/dev/null) ]; then
+echo "Код завершения 120"
+else
+echo "Файл не изменялся после указаной даты"
+fi
+else
+echo "Время введено некорректно"
+fi
+
+echo "Хотите продолжить Y/n?"
+read ANSWER
+
+if [ "$ANSWER" == "n" ]; then
+break
+fi
+done
+ 
